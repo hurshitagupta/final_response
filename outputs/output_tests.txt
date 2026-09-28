@@ -1,0 +1,15 @@
+=== OUTPUT TESTS ===
+
+Happy Path:
+Output valid: True
+Status: success
+Answer: The requested report has been generated successfully.
+
+Failure / Rejection Path:
+Rejected output: Final output contains blocked internal content: INTERNAL NOTE:
+
+=== MEASUREMENT ===
+Outputs checked: 2
+Valid outputs: 1
+Rejected outputs: 1
+Processing time: 1.11 ms

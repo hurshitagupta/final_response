@@ -1,0 +1,15 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Hurshita Gupta\OneDrive\Desktop\reflection_agent\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Hurshita Gupta\OneDrive\Desktop\reflection_agent
+configfile: pyproject.toml
+collecting ... collected 6 items
+
+tests/test_output_tests.py::test_valid_success_output PASSED             [ 16%]
+tests/test_output_tests.py::test_empty_answer_is_rejected PASSED         [ 33%]
+tests/test_output_tests.py::test_invalid_status_is_rejected PASSED       [ 50%]
+tests/test_output_tests.py::test_failure_requires_next_action PASSED     [ 66%]
+tests/test_output_tests.py::test_partial_output_requires_warning PASSED  [ 83%]
+tests/test_output_tests.py::test_internal_content_is_rejected PASSED     [100%]
+
+============================== 6 passed in 0.04s ==============================

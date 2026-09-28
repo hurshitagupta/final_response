@@ -132,21 +132,6 @@ The tests verify:
 
 ---
 
-### Assessment Evidence
-
-Task 1 provides the required assessment evidence through:
-
-- working response-schema implementation
-- documented run command
-- happy-path demonstration
-- failure/rejection demonstration
-- input and output validation
-- automated success and failure tests
-- saved execution output
-- saved test output
-- response count and processing-time measurement
-- traceable response fields showing status, completed action, warnings, and next action
-
 ### Guardrails
 
 No retry, timeout, or step-limit mechanism is added to this task because the response-schema operation contains no external call, retryable operation, or execution loop.
@@ -310,22 +295,6 @@ The tests verify:
 - invalid input is rejected
 
 ---
-
-### Assessment Evidence
-
-Task 2 provides the required evidence through:
-
-- working evidence-filter implementation
-- documented run command
-- happy-path example
-- rejection paths for internal and unverified evidence
-- automated success and failure tests
-- saved execution output
-- saved test output
-- input validation
-- traceable evidence sources and flags
-- accepted/rejected evidence counts
-- processing-time measurement
 
 ### Guardrails
 
@@ -506,23 +475,6 @@ The tests verify:
 
 ---
 
-### Assessment Evidence
-
-Task 3 provides the required assessment evidence through:
-
-- working validation implementation
-- documented run command
-- happy-path example
-- failure/rejection example
-- automated success and failure tests
-- saved execution output
-- saved test output
-- explicit output-validation rules
-- rejection reasons for invalid responses
-- valid/rejected response counts
-- processing-time measurement
-- traceable validation decisions
-
 ### Guardrails
 
 Validation is the main guardrail used in this task because it directly applies to the final-response contract.
@@ -672,25 +624,159 @@ The tests verify:
 
 ---
 
-### Assessment Evidence
-
-Task 4 provides the required assessment evidence through:
-
-- working redaction implementation
-- documented run command
-- happy-path example
-- sensitive-data handling example
-- failure/rejection example
-- automated success and failure tests
-- saved execution output
-- saved test output
-- input validation
-- traceable redaction behavior
-- sensitive-value count
-- processing-time measurement
-
 ### Guardrails
 
 Validation and redaction are applied because they directly relate to this task.
 
 Retry, timeout, and step-limit controls are not added because this task performs only local text processing and does not contain external calls, retryable operations, or long-running execution loops.
+
+---
+
+## Task 5 — Output Tests
+
+### Objective
+
+This task implements final output tests before a response is returned to the user.
+
+The purpose is to verify that the completed response satisfies the expected output contract and does not expose incomplete or internal information.
+
+The final output is checked for:
+
+- non-empty answer
+- valid completion status
+- completed action
+- actionable next step for failed responses
+- warning for partially completed responses
+- blocked internal content
+
+This provides a final quality check on the user-facing response.
+
+---
+
+### Implementation
+
+The `FinalOutput` dataclass defines the expected final-response structure:
+
+```python
+@dataclass
+class FinalOutput:
+    answer: str
+    status: str
+    completed_action: str
+    warnings: list[str]
+    next_action: str | None
+```
+
+The `check_final_output()` function verifies the complete response before it is returned.
+
+---
+
+### Output Checks
+
+The implementation verifies that the final answer is not empty.
+
+It also ensures that the response uses a supported status and contains a description of the completed action.
+
+For failure responses, a `next_action` is required so that unresolved work remains actionable.
+
+For partial responses, at least one warning must be present so that limitations are clearly disclosed.
+
+The implementation also checks for internal markers such as:
+
+```text
+INTERNAL NOTE:
+DEBUG:
+SYSTEM:
+TOOL_CALL:
+```
+
+These markers are rejected if they appear in the final user-facing response.
+
+---
+
+### Happy Path
+
+The happy-path example creates a valid successful response.
+
+---
+
+### Failure / Rejection Path
+
+The rejection example contains internal information inside the final answer.
+
+---
+
+### Validation
+
+The implementation rejects:
+
+- empty final answers
+- unsupported statuses
+- missing completed actions
+- failed responses without a next action
+- partial responses without warnings
+- final responses containing blocked internal markers
+
+This ensures that only complete and appropriate outputs can pass the final check.
+
+---
+
+### Traceability
+
+The execution output shows:
+
+- the valid output being checked
+- whether the valid output passes
+- the rejected output
+- the reason for rejection
+- number of valid and rejected outputs
+
+This makes the final output decision observable and reviewable.
+
+---
+
+### Measurement
+
+The implementation records:
+
+- total outputs checked
+- valid outputs
+- rejected outputs
+- processing time in milliseconds
+
+---
+
+### Run Command
+
+Run Task 5 from the project root:
+
+```powershell
+python output_tests.py
+```
+
+---
+
+### Automated Tests
+
+Run the Task 5 tests using:
+
+```powershell
+pytest tests/test_output_tests.py -v
+```
+
+The automated tests verify:
+
+- valid successful output passes
+- empty answer is rejected
+- invalid status is rejected
+- failed output without a next action is rejected
+- partial output without a warning is rejected
+- internal content is rejected
+
+---
+
+### Guardrails
+
+Output validation and internal-content checks are applied because they directly relate to the final response.
+
+Retry, timeout, and step-limit controls are not added because this task performs local output validation and does not include external calls, retries, or long-running operations.
