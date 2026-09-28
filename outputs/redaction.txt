@@ -1,0 +1,17 @@
+=== REDACTION ===
+
+Happy Path:
+Original: Report generated successfully for the customer.
+Final: Report generated successfully for the customer.
+
+Sensitive Data Path:
+Original: Send the report to user@example.com. Contact number is 9876543210. API key is sk-demo12345.
+Redacted: Send the report to [REDACTED_EMAIL]. Contact number is [REDACTED_PHONE]. API key is [REDACTED_API_KEY].
+
+Failure / Rejection Path:
+Rejected input: Input text cannot be empty.
+
+=== MEASUREMENT ===
+Sensitive values redacted: 3
+Rejected inputs: 1
+Processing time: 1.93 ms

@@ -528,3 +528,169 @@ Task 3 provides the required assessment evidence through:
 Validation is the main guardrail used in this task because it directly applies to the final-response contract.
 
 Retry, timeout, and step-limit controls are not added because this task performs only local validation and does not contain external calls, retryable operations, or long-running execution loops.
+
+---
+
+## Task 4 — Redaction
+
+### Objective
+
+This task implements redaction before the final response is shown to the user.
+
+The purpose is to prevent sensitive information from appearing in the external response.
+
+The implementation currently redacts:
+
+- email addresses
+- phone numbers
+- API-key-like values
+
+This supports the assessment objective of keeping internal or sensitive information separate from the user-facing final response.
+
+---
+
+### Implementation
+
+The `redact_sensitive_data()` function checks the response text for sensitive patterns.
+
+The implementation uses regular expressions for:
+
+```text
+EMAIL_PATTERN
+PHONE_PATTERN
+API_KEY_PATTERN
+```
+
+When a sensitive value is found, it is replaced with a safe placeholder.
+
+---
+
+### Happy Path
+
+The happy-path example uses normal text without any sensitive information:
+
+```text
+Report generated successfully for the customer.
+```
+
+Since no sensitive value is present, the output remains unchanged.
+
+This demonstrates that normal final-response content is not modified unnecessarily.
+
+---
+
+### Sensitive Data Path
+
+The implementation also demonstrates redaction using text containing:
+
+- an email address
+- a phone number
+- an API-key-like value
+
+---
+
+### Failure / Rejection Path
+
+The function validates its input before redaction.
+
+An empty string is rejected:
+
+```text
+ValueError: Input text cannot be empty.
+```
+
+A non-string input is also rejected:
+
+```text
+ValueError: Input must be a string.
+```
+
+This prevents invalid response data from being processed.
+
+---
+
+### Validation and Safe Boundary
+
+The redaction layer acts as a boundary between internal data and the external final response.
+
+Before text can be returned to the user, the function checks for sensitive values and replaces them with safe placeholders.
+
+This helps prevent accidental exposure of information that should not appear in the final response.
+
+---
+
+### Traceability
+
+The execution output shows:
+
+- the original safe text
+- the unchanged safe result
+- the original sensitive text
+- the redacted result
+- rejected invalid input
+- number of values redacted
+
+This makes the redaction behavior visible and reviewable.
+
+---
+
+### Measurement
+
+The implementation records:
+
+- number of sensitive values redacted
+- number of rejected inputs
+- processing time in milliseconds
+
+
+### Run Command
+
+Run Task 4 from the project root:
+
+```powershell
+python redaction.py
+```
+
+---
+
+### Automated Tests
+
+Run the Task 4 tests using:
+
+```powershell
+pytest tests/test_redaction.py -v
+```
+
+The tests verify:
+
+- safe text remains unchanged
+- email addresses are redacted
+- phone numbers are redacted
+- API-key-like values are redacted
+- empty input is rejected
+- non-string input is rejected
+
+---
+
+### Assessment Evidence
+
+Task 4 provides the required assessment evidence through:
+
+- working redaction implementation
+- documented run command
+- happy-path example
+- sensitive-data handling example
+- failure/rejection example
+- automated success and failure tests
+- saved execution output
+- saved test output
+- input validation
+- traceable redaction behavior
+- sensitive-value count
+- processing-time measurement
+
+### Guardrails
+
+Validation and redaction are applied because they directly relate to this task.
+
+Retry, timeout, and step-limit controls are not added because this task performs only local text processing and does not contain external calls, retryable operations, or long-running execution loops.
