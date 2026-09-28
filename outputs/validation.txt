@@ -1,0 +1,15 @@
+=== VALIDATION ===
+
+Happy Path:
+Valid response: True
+Status: success
+Answer: Report generated successfully.
+
+Failure / Rejection Path:
+Rejected response: Failure response must include a next action.
+
+=== MEASUREMENT ===
+Responses checked: 2
+Valid responses: 1
+Rejected responses: 1
+Processing time: 1.09 ms

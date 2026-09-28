@@ -332,3 +332,199 @@ Task 2 provides the required evidence through:
 Validation is applied because it directly relates to the evidence-filter operation.
 
 Retry, timeout, and step-limit controls are not added because this task does not perform external API calls, retryable operations, or long-running execution steps.
+
+---
+
+## Task 3 — Validation
+
+### Objective
+
+This task implements validation for the final response before it is returned to the user.
+
+The validation ensures that the response:
+
+- contains a non-empty answer
+- uses a supported status
+- states what action was completed
+- includes an actionable next step when the response fails
+- includes a warning when the response is only partially complete
+
+This supports the assessment requirement that final responses should be complete, structured, and useful to the user.
+
+---
+
+### Implementation
+
+The `ResponseData` dataclass defines the response structure:
+
+```python
+@dataclass
+class ResponseData:
+    answer: str
+    status: str
+    completed_action: str
+    warnings: list[str]
+    next_action: str | None
+```
+
+The `validate_response()` function checks whether the response satisfies the expected output contract before it can be returned.
+---
+
+### Validation Rules
+
+The following checks are implemented.
+
+#### Answer Validation
+
+The response must contain a non-empty answer.
+
+An empty answer is rejected with:
+
+```text
+ValueError: Answer cannot be empty.
+```
+
+#### Status Validation
+
+Only the following statuses are accepted:
+
+```text
+success
+failure
+partial
+```
+
+Any unsupported status is rejected.
+
+#### Completed Action Validation
+
+The response must explain what action was performed.
+
+An empty `completed_action` is rejected.
+
+#### Failure Response Validation
+
+A response with:
+
+```text
+status = failure
+```
+
+must include a `next_action`.
+
+This ensures that a failed request does not leave the user without guidance about what to do next.
+
+#### Partial Response Validation
+
+A response with:
+
+```text
+status = partial
+```
+
+must contain at least one warning.
+
+This ensures that important limitations are clearly disclosed.
+
+---
+
+### Happy Path
+
+The happy-path example uses a valid successful response
+
+The response satisfies all required validation checks and returns.
+---
+
+### Failure / Rejection Path
+
+The rejection example uses a response with:
+
+```text
+status = failure
+```
+
+but does not provide a next action.
+
+The response is rejected with:
+
+```text
+Failure response must include a next action.
+```
+
+This demonstrates that incomplete failure responses are prevented from reaching the user.
+
+---
+
+### Traceability
+
+The execution output shows:
+
+- the response being validated
+- whether the response is accepted
+- why an invalid response is rejected
+- counts of valid and rejected responses
+
+This makes the validation decision observable and reviewable.
+
+---
+
+### Measurement
+
+The implementation records:
+
+- total responses checked
+- valid responses
+- rejected responses
+- processing time in milliseconds
+
+---
+
+### Run Command
+
+Run Task 3 from the project root:
+
+```powershell
+python validation.py
+```
+---
+
+### Automated Tests
+
+Run the Task 3 tests using:
+
+```powershell
+pytest tests/test_validation.py -v
+```
+
+The tests verify:
+
+- a valid success response is accepted
+- a failure response without a next action is rejected
+- an empty answer is rejected
+- an invalid status is rejected
+- a partial response without a warning is rejected
+
+---
+
+### Assessment Evidence
+
+Task 3 provides the required assessment evidence through:
+
+- working validation implementation
+- documented run command
+- happy-path example
+- failure/rejection example
+- automated success and failure tests
+- saved execution output
+- saved test output
+- explicit output-validation rules
+- rejection reasons for invalid responses
+- valid/rejected response counts
+- processing-time measurement
+- traceable validation decisions
+
+### Guardrails
+
+Validation is the main guardrail used in this task because it directly applies to the final-response contract.
+
+Retry, timeout, and step-limit controls are not added because this task performs only local validation and does not contain external calls, retryable operations, or long-running execution loops.
