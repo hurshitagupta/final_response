@@ -1,0 +1,15 @@
+=== EVIDENCE FILTER ===
+
+Input Evidence:
+- The report contains 25 completed records. | source=report_data | verified=True | internal=False
+- Maybe the user prefers a shorter report. | source=internal_note | verified=True | internal=True
+- The report may contain 30 records. | source=unverified_source | verified=False | internal=False
+
+Accepted Evidence:
+- The report contains 25 completed records. | source=report_data
+
+=== MEASUREMENT ===
+Evidence received: 3
+Evidence accepted: 1
+Evidence rejected: 2
+Processing time: 0.94 ms
