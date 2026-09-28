@@ -1,0 +1,25 @@
+=== RESPONSE SCHEMA ===
+
+Happy Path:
+{
+  "answer": "Report generated successfully.",
+  "status": "success",
+  "completed_action": "Generated the requested report.",
+  "warnings": [],
+  "next_action": null
+}
+
+Failure Path:
+{
+  "answer": "Unable to complete: Required data was unavailable.",
+  "status": "failure",
+  "completed_action": "Checked available report data.",
+  "warnings": [
+    "Some required data could not be found."
+  ],
+  "next_action": "Provide the missing report data and try again."
+}
+
+=== MEASUREMENT ===
+Responses created: 2
+Processing time: 1.06 ms
